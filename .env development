@@ -1,0 +1,4 @@
+SECRET=your_secret_password_for_jwt_encoding
+APP_URL = your_url
+PORT = your_port
+DATABASE_URL= your_database_url
