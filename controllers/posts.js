@@ -117,37 +117,37 @@ res.status(500).send({error: "Something went wrong"})
 }
 }
 
-async function editPost (req,res){
+async function updatePost (req,res){
     const postId =Number(req.params.id)
-
-    const post = await prisma.post.findUnique({
-        where: {
-            id: postId
-        },
-})
-console.log("post:", post)
-if (post == null) {
-    return  res.status(404).send({error: "Post not found"})
-}
-const email = req.email
-if (email !== post.user.email){
-    return res.status(403).send({error: "You are not the owner of this post"})
-}
-if (!req.file) {
-    return  prisma.post.updateMany({where: { id: postId}})
-
-.then(() => 
-res.status(200).json({
-    message: "Updated post"
-})
-)
-.catch((err) => 
-res.status(400).json({error: "failed request"})
-)
-}
-
+    const content = req.body.content
+    console.log("content:", content)
+    const hasImage = req.file !=null
+    console.log("hasImage:",hasImage )
+    const url = hasImage ? createImageUrl(req) : ""
+    const email = req.email
+    try {   
+    const user = await prisma.user.findUnique({where: {postId}})
+    const userId = user.id
+    console.log("userId:", userId) 
+    
+    const post = {  content,  userId, imageUrl:url }
+    console.log("post:", post)
+    const result = await prisma.post.update({ data:post})  
+    console.log("result:",result )  
+    //post.unshift(post)
+    res.send({ message: "post updated" })
+}catch(err){
+    res.status(500).send({ error: "Something went wrong"}) 
 }
 
 
 
-module.exports = {getPosts, createPost,  createComment, deletePost, editPost }
+
+
+
+
+
+
+}
+
+module.exports = {getPosts, createPost,  createComment, deletePost, updatePost }
