@@ -22,9 +22,12 @@ app.use(express.json())
 app.use("/posts", postRouter)
 app.use("/uploads", express.static("uploads"))
 
+//Middleware de validation des email , pour faire la verification de l'email  pour se connecter
+const emailValid = require('./middleware/emailValid')
+const passValid = require ('./middleware/passwordValid') 
 
 app.post("/auth/login", logUser)
-app.post("/auth/signup", signupUser)
+app.post("/auth/signup", passValid, emailValid, signupUser)
 
 app.listen(port, () => console.log(`Listening on port ${port}`))
 

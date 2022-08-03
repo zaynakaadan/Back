@@ -9,10 +9,11 @@ async function logUser(req, res){
     const {email, password } = req.body
     try {    
     const user = await getuser(email)
-    if (user == null) return res.status(404).send({error:"User not found"})
+    if (user == null) return res.status(404).send({error:"User not found your password must have at least 8 characters 1 uppercase character 1 number 1 special character"})
         
 const isPasswordCorrect = await checkPassword(user, password)
         if(!isPasswordCorrect) return res.status(401).send({error:"Wrong password"})
+        
         const token = makeToken(email)    
     res.status(200).send({token: token , email: user.email})  
 } catch(error) { 
@@ -41,6 +42,7 @@ try {
 
 if (password !== confirmPassword) return res.status(400).send({error: "Passwords don't match"})
 console.log("confirmPassword:", confirmPassword)
+
 //si l'utilisateur n'est pas dans la base de données
 const userInDb = await getuser(email)
 if (userInDb != null) return res.status(400).send({error: "users already exists"})

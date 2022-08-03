@@ -22,6 +22,7 @@ model Post {
     user      User @relation(fields: [userId], references: [id])
     comments  Comment[]
     createdAt DateTime  @default(now())
+     
 }
 model Comment {
   id          Int @id @default(autoincrement())
