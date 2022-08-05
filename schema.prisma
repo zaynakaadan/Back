@@ -11,8 +11,10 @@ model User {
   id        Int     @id @default(autoincrement())
   email     String  @unique
   password  String
+  admin     Int @default(0)
   posts     Post[]
   comments  Comment[]
+  
 }
 model Post {
     id        Int @id @default(autoincrement())     
