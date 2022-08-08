@@ -8,21 +8,15 @@ const cors = require("cors")
 
 const { postRouter } = require("./routes/posts")
 
-
 const {prisma} = require("./db/db.js")
-
 
 
 app.use(cors())
 app.use(express.json())
 //app.use(bodyParser.json())
 
-
-
 app.use("/posts", postRouter)
 app.use("/uploads", express.static("uploads"))
-
-
 
 app.post("/auth/login", logUser)
 app.post("/auth/signup", signupUser)

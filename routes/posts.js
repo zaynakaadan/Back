@@ -8,11 +8,11 @@ const { imageUpload } = require("../middleware/image")
 
 postRouter.use(checkToken)
 
-postRouter.post("/:id", createComment)
+postRouter.post("/AddComment/:id", createComment)
 postRouter.get("/" , getPosts)
-postRouter.post("/", imageUpload, createPost)
+postRouter.post("/CreatePost/", imageUpload, createPost)
 postRouter.delete("/:id", deletePost)
-postRouter.put("/:id", imageUpload, updatePost)
-postRouter.post("/:id", likePost)
+postRouter.post("/EditCategory/:id", imageUpload, updatePost)
+postRouter.get("/LikePost", likePost)
 
 module.exports = { postRouter,  imageUpload}

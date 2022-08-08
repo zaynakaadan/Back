@@ -14,6 +14,7 @@ model User {
   admin     Int @default(0)
   posts     Post[]
   comments  Comment[]
+  fans     Fan[]
   
 }
 model Post {
@@ -24,7 +25,7 @@ model Post {
     user      User @relation(fields: [userId], references: [id])
     comments  Comment[]
     createdAt DateTime  @default(now())
-     
+    fans      Fan[]  
 }
 model Comment {
   id          Int @id @default(autoincrement())
@@ -32,6 +33,14 @@ model Comment {
   postId      Int 
   post        Post@relation(fields: [postId], references: [id])
   createdAt   DateTime  @default(now())
+  userId      Int
+  user        User @relation(fields: [userId], references: [id])
+}
+
+model Fan {
+  id          Int @id @default(autoincrement())
+  postId      Int
+  post        Post @relation(fields: [postId], references: [id])
   userId      Int
   user        User @relation(fields: [userId], references: [id])
 }
