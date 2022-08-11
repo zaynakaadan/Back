@@ -1,6 +1,6 @@
 
 const {prisma} = require("../db/db.js")
-const fs = require("fs-extra")
+const fs = require("fs-extra")//Permet de gérer les fichiers stockés
 //Cette fonction va envoyer une array avec 3posts
 async function getPosts (req, res) {
 console.log("req.email:", req.email)//Voir l 'email dans token
@@ -29,7 +29,7 @@ console.log("req.email:", req.email)//Voir l 'email dans token
                 }
             },
             fans:{
-               include: {
+                include: {
                     user: {
                         select: {
                             email: true
@@ -49,7 +49,7 @@ console.log("req.email:", req.email)//Voir l 'email dans token
         res.status(500).send({ error: "Utilisateur introuvable"}) 
     }
 }
-
+//CreatePost pour créer un post
 async function createPost (req, res) {        
     const content = req.body.content
     const hasImage = req.file !=null
@@ -77,7 +77,7 @@ function createImageUrl(req) {
     const host = req.get("host")
     return `${protocol}://${host}/${pathToImage}`
 }
-
+//CreateComment pour créer un commentaire
 async function createComment (req,res) {       
 const postId = Number(req.params.id)
 const post = await prisma .post.findUnique({
@@ -103,7 +103,7 @@ console.log("commentToSend:", commentToSend)
 const comment = await prisma.comment.create({data: commentToSend})
 res.send({comment})
 }
-
+//DeletePost pour supprimer un post
 async function deletePost (req,res){
 const postId =Number(req.params.id)
 console.log("req.params.id:", req.params.id)
@@ -131,7 +131,7 @@ if (email !== post.user.email && isAdmin === 1){
 }
 if (post.imageUrl !== null) {
     const filename = post.imageUrl.split("/uploads/")[1];
-    await fs.unlink(`uploads/${filename}`);
+    await fs.unlink(`uploads/${filename}`);// Je supprime le fichier image en amont
     }
 await prisma.comment.deleteMany({where: {postId}})
 await prisma.post.delete({where: { id: postId}})
@@ -140,7 +140,7 @@ res.send ({message: "post deleted"})
 res.status(500).send({error: "Something went wrong"})
 }
 }
-
+//UpdatePost pour modifier un post
 async function updatePost (req,res){
     const postId =Number(req.params.id)
     //const postId =Number(req.body.id)
@@ -170,21 +170,23 @@ async function updatePost (req,res){
         if (email !== post.user.email && isAdmin === 1){
             return res.status(403).send({error: "You are not the owner of this post"})
         } 
-
-        if(url !== "")
+        //modifier le content
+        if(url !== "" )
         {
             const filename = post.imageUrl.split("/uploads/")[1];
+            console.log("filename:", filename)
             await fs.unlink(`uploads/${filename}`);
-        }else{
+        }else{//sinon ça sera la meme image
             url = post.imageUrl;
-        }
+            console.log("url:",url)
+        }//modifier l'image
         if(content !== "")
         {
-            url = post.imageUrl;
+            url = post.imageUrl;            
         }else{
             content = post.content;
+            console.log("content:", content)
         }
-
 
         await prisma.post.update({ where: { id: postId},
             data: {
@@ -203,9 +205,7 @@ async function updatePost (req,res){
 } 
 async function likePost (req,res){
     const userId =Number(req.query.userId)
-    const postId =Number(req.query.postId)
-
-    
+    const postId =Number(req.query.postId)    
     try {
         const fan = await prisma.fan.findFirst({
             where: {

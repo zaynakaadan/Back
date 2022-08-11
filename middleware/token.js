@@ -19,10 +19,8 @@ function checkToken (req,res,next) {
         //Si le token est expiré
         if (err) return res.status(403)
             .send({ error: "Token invalid"  })
-            req.email = decoded.email//J'ai mis l'email(admin) dans token
+            req.email = decoded.email//J'ai mis l'email dans token
         next()
     })
 }
-
-
 module.exports = { checkToken }

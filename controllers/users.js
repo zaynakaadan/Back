@@ -3,7 +3,7 @@
 const jwt = require("jsonwebtoken")
 const {prisma} = require("../db/db.js")
 // Module de hash Mot De Passe
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcrypt")//Permet de chiffrer les mots de passe
 const passwordValidator = require('password-validator') 
 
 let schema = new passwordValidator();
@@ -27,7 +27,7 @@ schema
 // Pour que l'utilisateur utilise un vrai email pour créer un compte 
 const regexEmail =
 /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
+//logUser pour permettre à un utilisateur de se connecter
 async function logUser(req, res){
     const {email, password } = req.body
     try {    
@@ -47,7 +47,7 @@ const isPasswordCorrect = await checkPassword(user, password)
 function makeToken (email) {        
     return jwt.sign({ email } ,process.env.SECRET, {expiresIn: "24h"})        
 }
-    //Data Base
+//Recherche d'un utilisateur dans la base de données
 function getuser(email) {
     return prisma.user.findUnique({where: {email}})        
 }
@@ -55,9 +55,8 @@ function getuser(email) {
 function checkPassword(user, password) {
     return bcrypt.compare(password, user.password)      
 }
-
+//signupUser pour inscrire un utilisateur et hasher son mot de passe
 async function signupUser (req,res) {
-
 const {email, password, confirmPassword } = req.body
 console.log("email:", email)
 if (!regexEmail.test(email)){
@@ -66,8 +65,6 @@ return res.status(400).json({ error: "Email incorrect" })
     if (!schema.validate(password)){
         return  res.status(400).json({ error: "your password must have at least 8 characters 1 uppercase character 1 number 1 special character" })
     }
-    
-
     if (confirmPassword == null)
     return res.status(400).send({ error: "Please confirm your password" })
 
